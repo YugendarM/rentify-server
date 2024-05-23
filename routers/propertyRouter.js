@@ -1,10 +1,12 @@
 const express = require("express")
-const { addProperty  } = require("../controllers/propertyController")
+const { addProperty, getMyProperties, updateProperty, deleteProperty  } = require("../controllers/propertyController")
 const authenticateUser = require("../middleware/authenticateUser")
 
 const route = express()
 
 route.post('/add', authenticateUser, addProperty)
-// route.post('/login', userLogin)
+route.get('/my_property', authenticateUser, getMyProperties)
+route.patch('/update', authenticateUser, updateProperty)
+route.delete('/delete', authenticateUser, deleteProperty)
 
 module.exports = route

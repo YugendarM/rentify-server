@@ -11,6 +11,7 @@ const authenticateUser = (request, response, next) => {
         if(error){
             return response.status(404).send({message: "User not authorized"})
         }
+        console.log(data)
         request.user = data
     })
     next()
