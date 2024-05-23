@@ -1,6 +1,8 @@
 const userModel = require("../models/userModel")
+const propertyModel = require("../models/propertyModel")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
+const { resource } = require("../routers/propertyRouter")
 const JWT_TOKEN = process.env.JWT_TOKEN
 
 const userSignup = async(request, response) => {
@@ -44,5 +46,31 @@ const userLogin = async(request, response) => {
     }
 }
 
+const getSellerDetails = async(request,response) => {
+    const userData = request.user
+    const propertyData = request.body
+    try{
+        if(userData.role === "buyer"){
+            const validProperty = await propertyModel.findOne({_id: propertyData._id})
+            if(validProperty){
+                const ownerDetails = await userModel.findOne({_id: validProperty.owner}, { firstName: 1,lastName: 1, phoneNo: 1, email: 1, location: 1 } )
+                if(ownerDetails){
+                    return response.status(200).send(ownerDetails)
+                }
+                else{
+                    return response.status(404).send({message: "Owner Not found"})
+                }
+            }
+            else {
+                return response.status(404).send({message: "Not a valid property"})
+            }
+        }
+        return response.status(401).send({message: "Not an authorized buyer"})
+    }
+    catch(error){
+        response.status(500).send({message: error.message})
+    }
+}
 
-module.exports = {userSignup, userLogin }
+
+module.exports = {userSignup, userLogin, getSellerDetails }

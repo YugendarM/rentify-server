@@ -1,6 +1,7 @@
 const propertyModel = require("../models/propertyModel")
 const userModel = require("../models/userModel")
 
+//Seller
 const addProperty = async(request,response) => {
     const propertyData = request.body
     const userData = request.user
@@ -16,6 +17,7 @@ const addProperty = async(request,response) => {
     }
 }
 
+//Seller
 const getMyProperties = async(request, response) => {
     const userData = request.user
     console.log(userData)
@@ -39,6 +41,7 @@ const getMyProperties = async(request, response) => {
     }
 }
 
+//Seller
 const updateProperty = async(request, response) => {
     const userData = request.user
     const propertyData = request.body
@@ -60,6 +63,7 @@ const updateProperty = async(request, response) => {
     }
 }
 
+//Seller
 const deleteProperty = async(request, response) => {
     const userData = request.user
     const propertyData = request.body
@@ -81,4 +85,26 @@ const deleteProperty = async(request, response) => {
     }
 }
 
-module.exports = {addProperty, getMyProperties, updateProperty, deleteProperty}
+//Buyer
+const getAllProperties = async(request, response) => {
+    const userData = request.user
+    try{
+        if(userData.role === "buyer"){
+            const properties = await propertyModel.find()
+            return response.status(200).send(properties)
+        }
+        else{
+            return response.status(401).send({message: "Not an authorized Buyer"})
+        }
+    }
+    catch(error){
+        response.status(200).send({message: error.message})
+    }
+}
+
+//Buyer
+const filterProperty = async(request, response) => {
+
+}
+
+module.exports = {addProperty, getMyProperties, updateProperty, deleteProperty, getAllProperties, filterProperty}
